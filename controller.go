@@ -21,8 +21,6 @@ func GetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-
-	log.Printf("%+v\n", player)
 }
 
 func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
