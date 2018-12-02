@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+)
 
 var (
 	ENEMY_SKELETON = "skeleton"
@@ -60,4 +63,33 @@ func (e *Enemy) CreatePreset(p string) error {
 	ENEMY_ID++
 
 	return nil
+}
+
+func (e *Enemy) AttackPlayer() string {
+	var strongestAbility Ability
+
+	for _, a := range e.Abilities {
+		if (a.Damage > strongestAbility.Damage) && a.CurrentCD == 0 {
+			strongestAbility = a
+		}
+	}
+
+	if strongestAbility.Name == "" {
+		return fmt.Sprint("All abilities on cooldown")
+	}
+
+	diceRoll := DiceRoll()
+
+	if (diceRoll + strongestAbility.Attack) < player.ArmorClass {
+		return fmt.Sprintf("Ability %s missed you.", strongestAbility.Name)
+	}
+
+	player.CurrentHp = player.CurrentHp - strongestAbility.Damage
+	log.Printf("PLAYER hit with %s for %d.", strongestAbility.Name, strongestAbility.Damage)
+
+	if player.CurrentHp <= 0 {
+		return fmt.Sprintf("You died.")
+	}
+
+	return fmt.Sprintf("You have been hit with %s for %d.", strongestAbility.Name, strongestAbility.Damage)
 }

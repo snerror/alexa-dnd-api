@@ -40,7 +40,7 @@ func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 }
 
-func PlayerAttackEnemy(w http.ResponseWriter, r *http.Request) {
+func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
 	var enemy Enemy
 	var ability Ability
 
@@ -72,8 +72,30 @@ func PlayerAttackEnemy(w http.ResponseWriter, r *http.Request) {
 		buildResponse(w, r, "unknown ability used")
 	}
 
-	response := player.AttackEnemy(ability, enemy)
-	buildResponse(w, r, response)
+	buildResponse(w, r, player.AttackEnemy(ability, enemy))
+}
+
+func EnemyAttackPlayerAction(w http.ResponseWriter, r *http.Request) {
+	var enemy Enemy
+
+	vars := mux.Vars(r)
+	enemyId, err := strconv.Atoi(vars["enemyId"])
+	if err != nil {
+		serverError(w, r, err)
+		return
+	}
+
+	for _, e := range enemies {
+		if e.ID == enemyId {
+			enemy = e
+		}
+	}
+
+	if enemy.Name == "" {
+		buildResponse(w, r, "unknown enemy attacked")
+	}
+
+	buildResponse(w, r, enemy.AttackPlayer())
 }
 
 func buildResponse(w http.ResponseWriter, r *http.Request, value string) {
