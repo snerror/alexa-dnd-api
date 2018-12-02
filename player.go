@@ -50,9 +50,9 @@ func (p *Player) CreateFromTemplate(t string) error {
 
 		a1 := Ability{
 			Name:      "Backstab",
-			Attack:    7,
-			Damage:    1,
-			CD:        0,
+			Attack:    10,
+			Damage:    2,
+			CD:        3,
 			CurrentCD: 0,
 		}
 
@@ -74,7 +74,7 @@ func (p *Player) CreateFromTemplate(t string) error {
 // TODO add CD
 func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 	if a.CD != 0 && a.CurrentCD != 0 {
-		return fmt.Sprintf("Ability %s currently on cooldown. You can use it in %d turns.", a.Name, a.CD-a.CurrentCD)
+		return fmt.Sprintf("Ability %s currently on cooldown. You can use it in %d turns.", a.Name, a.CurrentCD)
 	}
 	log.Printf("PLAYER used %s on %s.\n", a.Name, e.Name)
 
@@ -90,6 +90,11 @@ func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 	e.CurrentHp = e.CurrentHp - a.Damage
 
 	log.Printf("PLAYER hits %s for %d.\n", e.Name, a.Damage)
+
+	if a.CD > 0 && a.CurrentCD == 0 {
+		a.CurrentCD = a.CD
+		log.Printf("PLAYER ability %s cooldown set to %d.\n", a.Name, a.CurrentCD)
+	}
 
 	if e.CurrentHp <= 0 {
 		log.Printf("PLAYER kills %s.\n", e.Name)

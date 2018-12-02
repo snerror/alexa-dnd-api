@@ -46,8 +46,8 @@ func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
 }
 
 func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
-	//var enemy *Enemy
-	var ability Ability
+	var enemy *Enemy
+	var ability *Ability
 
 	vars := mux.Vars(r)
 	a := vars["ability"]
@@ -57,28 +57,33 @@ func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO fix this
-	//for _, e := range enemies {
-	//	if e.ID == enemyId {
-	//		enemy = &e
-	//	}
-	//}
-	//
-	//if enemy.Name == "" {
-	//	buildResponse(w, r, "unknown enemy targeted")
-	//}
-
-	for _, ab := range player.Abilities {
-		if strings.ToLower(ab.Name) == strings.ToLower(a) {
-			ability = ab
+	for i := 0; i < len(enemies); i++ {
+		if enemies[i].ID == enemyId {
+			enemy = &enemies[i]
 		}
 	}
 
-	if ability.Name == "" {
-		buildResponse(w, r, "unknown ability used")
+	if enemy == nil {
+		buildResponse(w, r, "enemy not found")
+		return
 	}
 
-	buildResponse(w, r, player.AttackEnemy(&ability, &enemies[enemyId]))
+	for i := 0; i < len(player.Abilities); i++ {
+		if strings.ToLower(player.Abilities[i].Name) == strings.ToLower(a) {
+			ability = &player.Abilities[i]
+		}
+
+		if player.Abilities[i].CurrentCD > 0 {
+			player.Abilities[i].CurrentCD--
+		}
+	}
+
+	if ability == nil {
+		buildResponse(w, r, "unknown ability used")
+		return
+	}
+
+	buildResponse(w, r, player.AttackEnemy(ability, enemy))
 }
 
 func EnemyAttackPlayerAction(w http.ResponseWriter, r *http.Request) {
