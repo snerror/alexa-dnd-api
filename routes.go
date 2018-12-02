@@ -32,4 +32,10 @@ var routes = Routes{
 		"/player/class/{className}",
 		SetPlayerClassAction,
 	},
+	Route{
+		"PlayerAttackEnemy",
+		"GET",
+		"/player/attack/{ability}/{enemyId}",
+		PlayerAttackEnemy,
+	},
 }

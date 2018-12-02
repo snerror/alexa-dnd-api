@@ -6,6 +6,8 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 func IndexAction(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +35,55 @@ func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	buildResponse(w, r, "player created")
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+}
+
+func PlayerAttackEnemy(w http.ResponseWriter, r *http.Request) {
+	var enemy Enemy
+	var ability Ability
+
+	vars := mux.Vars(r)
+	a := vars["ability"]
+	enemyId, err := strconv.Atoi(vars["enemyId"])
+	if err != nil {
+		serverError(w, r, err)
+		return
+	}
+
+	for _, e := range enemies {
+		if e.ID == enemyId {
+			enemy = e
+		}
+	}
+
+	if enemy.Name == "" {
+		buildResponse(w, r, "unknown enemy targeted")
+	}
+
+	for _, ab := range player.Abilities {
+		if strings.ToLower(ab.Name) == strings.ToLower(a) {
+			ability = ab
+		}
+	}
+
+	if ability.Name == "" {
+		buildResponse(w, r, "unknown ability used")
+	}
+
+	response := player.AttackEnemy(ability, enemy)
+	buildResponse(w, r, response)
+}
+
+func buildResponse(w http.ResponseWriter, r *http.Request, value string) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if err := json.NewEncoder(w).Encode(map[string]interface{}{
+		"value": value,
+	}); err != nil {
+		serverError(w, r, err)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 }
 
