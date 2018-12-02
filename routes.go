@@ -15,9 +15,21 @@ type Routes []Route
 
 var routes = Routes{
 	Route{
-		"Index",
+		"index",
 		"GET",
 		"/",
-		Index,
+		IndexAction,
+	},
+	Route{
+		"GetPlayerClass",
+		"Get",
+		"/player",
+		GetPlayerClassAction,
+	},
+	Route{
+		"SetPlayerClass",
+		"POST",
+		"/player/class/{className}",
+		SetPlayerClassAction,
 	},
 }

@@ -1,13 +1,40 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
 
-func Index(w http.ResponseWriter, r *http.Request) {
+func IndexAction(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Welcome to Alexa DND!")
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+}
+
+func GetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	if err := json.NewEncoder(w).Encode(player); err != nil {
+		serverError(w, r, err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+
+	log.Printf("%+v\n", player)
+}
+
+func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	className := vars["className"]
+
+	err := player.CreateFromTemplate(className)
+	if err != nil {
+		serverError(w, r, err)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
