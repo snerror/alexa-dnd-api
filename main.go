@@ -6,9 +6,16 @@ import (
 	"net/http"
 )
 
-var dungeon = DrawDungeon(5, 5)
-var player Player
-var enemies []Enemy
+var (
+	dungeon = DrawDungeon(5, 5)
+	player  Player
+	enemies []Enemy
+	state   string
+
+	STATE_INITIAL       = "initial"
+	STATE_COMBAT_PLAYER = "combat_player"
+	STATE_COMBAT_ENEMY  = "combat_enemy"
+)
 
 func main() {
 	router := NewRouter()

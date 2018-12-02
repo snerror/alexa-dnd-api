@@ -92,7 +92,10 @@ func (p *Player) AttackEnemy(a Ability, e Enemy) string {
 		return fmt.Sprintf("Ability %s defeated %s with %d damage.", a.Name, e.Name, a.Damage)
 	}
 
-	return fmt.Sprintf("Ability %s hit %s with %d damage.", a.Name, e.Name, a.Damage)
+	// ENEMY RESPONSE
+	enemyAttackResponse := e.AttackPlayer()
+
+	return fmt.Sprintf("Ability %s hit %s with %d damage. %s", a.Name, e.Name, a.Damage, enemyAttackResponse)
 }
 
 func DiceRoll() int {

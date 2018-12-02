@@ -77,7 +77,7 @@ func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
 		buildResponse(w, r, "unknown ability used")
 	}
 
-	buildResponse(w, r, player.AttackEnemy(ability, enemy))
+	buildResponse(w, r, player.AttackEnemy(ability, enemies[enemyId]))
 }
 
 func EnemyAttackPlayerAction(w http.ResponseWriter, r *http.Request) {

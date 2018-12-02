@@ -28,7 +28,7 @@ func (e *Enemy) CreatePreset(p string) error {
 
 	if p == ENEMY_SKELETON {
 		e.Name = ENEMY_SKELETON
-		e.CurrentHp = 1
+		e.CurrentHp = 10
 		e.MaxHp = 1
 		e.ArmorClass = 16
 
