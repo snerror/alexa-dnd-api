@@ -66,30 +66,40 @@ func (e *Enemy) CreatePreset(p string) error {
 }
 
 func (e *Enemy) AttackPlayer() string {
-	var strongestAbility Ability
+	ability := e.Abilities[0]
 
 	for _, a := range e.Abilities {
-		if (a.Damage > strongestAbility.Damage) && a.CurrentCD == 0 {
-			strongestAbility = a
+		if (a.Damage > ability.Damage) && a.CurrentCD == 0 {
+			ability = a
+		}
+
+		if a.CurrentCD > 0 {
+			a.CurrentCD--
 		}
 	}
 
-	if strongestAbility.Name == "" {
+	if ability.Name == "" {
 		return fmt.Sprint("All abilities on cooldown")
 	}
 
 	diceRoll := DiceRoll()
 
-	if (diceRoll + strongestAbility.Attack) < player.ArmorClass {
-		return fmt.Sprintf("Ability %s missed you.", strongestAbility.Name)
+	if (diceRoll + ability.Attack) < player.ArmorClass {
+		return fmt.Sprintf("Ability %s missed you.", ability.Name)
 	}
 
-	player.CurrentHp = player.CurrentHp - strongestAbility.Damage
-	log.Printf("PLAYER hit with %s for %d.", strongestAbility.Name, strongestAbility.Damage)
+	if ability.CD > 0 && ability.CurrentCD == 0 {
+		// todo fix CD
+		ability.CurrentCD = 100
+		log.Printf("ABILITY: %+v\n", ability)
+	}
+
+	player.CurrentHp = player.CurrentHp - ability.Damage
+	log.Printf("PLAYER hit with %s for %d.", ability.Name, ability.Damage)
 
 	if player.CurrentHp <= 0 {
 		return fmt.Sprintf("You died.")
 	}
 
-	return fmt.Sprintf("You have been hit with %s for %d.", strongestAbility.Name, strongestAbility.Damage)
+	return fmt.Sprintf("You have been hit with %s for %d.", ability.Name, ability.Damage)
 }

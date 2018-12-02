@@ -35,6 +35,11 @@ func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var tempEnemy Enemy
+	tempEnemy.CreatePreset(ENEMY_SKELETON)
+
+	enemies = append(enemies, tempEnemy)
+
 	buildResponse(w, r, "player created")
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -101,7 +106,9 @@ func EnemyAttackPlayerAction(w http.ResponseWriter, r *http.Request) {
 func buildResponse(w http.ResponseWriter, r *http.Request, value string) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if err := json.NewEncoder(w).Encode(map[string]interface{}{
-		"value": value,
+		"alexaResponsevalue": value,
+		"player":             player,
+		"enemies":            enemies,
 	}); err != nil {
 		serverError(w, r, err)
 		return

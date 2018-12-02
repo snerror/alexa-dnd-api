@@ -71,6 +71,7 @@ func (p *Player) CreateFromTemplate(t string) error {
 	return nil
 }
 
+// TODO add CD
 func (p *Player) AttackEnemy(a Ability, e Enemy) string {
 	if a.CD != 0 && a.CurrentCD != 0 {
 		return fmt.Sprintf("Ability %s currently on cooldown. You can use it in %d turns.", a.Name, a.CD-a.CurrentCD)
@@ -96,7 +97,7 @@ func (p *Player) AttackEnemy(a Ability, e Enemy) string {
 
 func DiceRoll() int {
 	i := rand.Intn(20)
-	log.Printf("Dice rolled %i.\n", i)
+	log.Printf("Dice rolled %d.\n", i)
 
 	return i
 }
