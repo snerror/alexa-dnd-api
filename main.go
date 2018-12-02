@@ -15,7 +15,7 @@ func main() {
 	dungeon.generator()
 
 	var tempEnemy Enemy
-	tempEnemy.CreatePreset(ENEMY_SPIDER)
+	tempEnemy.CreatePreset(ENEMY_SKELETON)
 
 	enemies = append(enemies, tempEnemy)
 

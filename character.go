@@ -18,6 +18,7 @@ type Player struct {
 }
 
 type Ability struct {
+	Name      string
 	Attack    int
 	Damage    int
 	CD        int
@@ -35,6 +36,25 @@ func (p *Player) CreateFromTemplate(t string) error {
 		p.CurrentHp = 8
 		p.MaxHp = 8
 		p.ArmorClass = 14
+
+		a1 := Ability{
+			Name:      "Backstab",
+			Attack:    7,
+			Damage:    1,
+			CD:        0,
+			CurrentCD: 0,
+		}
+
+		a2 := Ability{
+			Name:      "Strike",
+			Attack:    7,
+			Damage:    1,
+			CD:        0,
+			CurrentCD: 0,
+		}
+
+		p.Abilities = append(p.Abilities, a1)
+		p.Abilities = append(p.Abilities, a2)
 	}
 
 	return nil

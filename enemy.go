@@ -28,6 +28,25 @@ func (e *Enemy) CreatePreset(p string) error {
 		e.CurrentHp = 1
 		e.MaxHp = 1
 		e.ArmorClass = 16
+
+		a1 := Ability{
+			Name:      "Slice",
+			Attack:    9,
+			Damage:    2,
+			CD:        2,
+			CurrentCD: 0,
+		}
+
+		a2 := Ability{
+			Name:      "Strike",
+			Attack:    7,
+			Damage:    1,
+			CD:        0,
+			CurrentCD: 0,
+		}
+
+		e.Abilities = append(e.Abilities, a1)
+		e.Abilities = append(e.Abilities, a2)
 	}
 
 	if p == ENEMY_SPIDER {
