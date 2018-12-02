@@ -72,7 +72,7 @@ func (p *Player) CreateFromTemplate(t string) error {
 }
 
 // TODO add CD
-func (p *Player) AttackEnemy(a Ability, e Enemy) string {
+func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 	if a.CD != 0 && a.CurrentCD != 0 {
 		return fmt.Sprintf("Ability %s currently on cooldown. You can use it in %d turns.", a.Name, a.CD-a.CurrentCD)
 	}
@@ -81,7 +81,9 @@ func (p *Player) AttackEnemy(a Ability, e Enemy) string {
 	diceRoll := DiceRoll()
 
 	if (diceRoll + a.Attack) < e.ArmorClass {
-		return fmt.Sprintf("Ability %s missed %s.", a.Name, e.Name)
+		// ENEMY RESPONSE
+		enemyAttackResponse := e.AttackPlayer()
+		return fmt.Sprintf("Ability %s missed %s. %s", a.Name, e.Name, enemyAttackResponse)
 	}
 
 	e.CurrentHp = e.CurrentHp - a.Damage

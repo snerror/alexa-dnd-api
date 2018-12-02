@@ -66,11 +66,12 @@ func (e *Enemy) CreatePreset(p string) error {
 }
 
 func (e *Enemy) AttackPlayer() string {
-	ability := e.Abilities[0]
+	var ability *Ability
+	ability = &e.Abilities[0]
 
 	for _, a := range e.Abilities {
 		if (a.Damage > ability.Damage) && a.CurrentCD == 0 {
-			ability = a
+			ability = &a
 		}
 
 		if a.CurrentCD > 0 {
@@ -89,9 +90,7 @@ func (e *Enemy) AttackPlayer() string {
 	}
 
 	if ability.CD > 0 && ability.CurrentCD == 0 {
-		// todo fix CD
-		ability.CurrentCD = 100
-		log.Printf("ABILITY: %+v\n", ability)
+		ability.CurrentCD = ability.CD
 	}
 
 	player.CurrentHp = player.CurrentHp - ability.Damage

@@ -46,7 +46,7 @@ func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
 }
 
 func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
-	var enemy Enemy
+	//var enemy Enemy
 	var ability Ability
 
 	vars := mux.Vars(r)
@@ -57,15 +57,15 @@ func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, e := range enemies {
-		if e.ID == enemyId {
-			enemy = e
-		}
-	}
-
-	if enemy.Name == "" {
-		buildResponse(w, r, "unknown enemy targeted")
-	}
+	//for _, e := range enemies {
+	//	if e.ID == enemyId {
+	//		enemy = e
+	//	}
+	//}
+	//
+	//if enemy.Name == "" {
+	//	buildResponse(w, r, "unknown enemy targeted")
+	//}
 
 	for _, ab := range player.Abilities {
 		if strings.ToLower(ab.Name) == strings.ToLower(a) {
@@ -77,7 +77,7 @@ func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
 		buildResponse(w, r, "unknown ability used")
 	}
 
-	buildResponse(w, r, player.AttackEnemy(ability, enemies[enemyId]))
+	buildResponse(w, r, player.AttackEnemy(&ability, &enemies[enemyId]))
 }
 
 func EnemyAttackPlayerAction(w http.ResponseWriter, r *http.Request) {
