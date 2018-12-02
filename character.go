@@ -76,11 +76,12 @@ func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 	if a.CD != 0 && a.CurrentCD != 0 {
 		return fmt.Sprintf("Ability %s currently on cooldown. You can use it in %d turns.", a.Name, a.CD-a.CurrentCD)
 	}
-	log.Printf("Ability %s used on %s.\n", a.Name, e.Name)
+	log.Printf("PLAYER used %s on %s.\n", a.Name, e.Name)
 
 	diceRoll := DiceRoll()
 
 	if (diceRoll + a.Attack) < e.ArmorClass {
+		log.Printf("PLAYER missed %s.\n", e.Name)
 		// ENEMY RESPONSE
 		enemyAttackResponse := e.AttackPlayer()
 		return fmt.Sprintf("Ability %s missed %s. %s", a.Name, e.Name, enemyAttackResponse)
@@ -88,9 +89,10 @@ func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 
 	e.CurrentHp = e.CurrentHp - a.Damage
 
-	log.Printf("You hit %s for %d.\n", e.Name, a.Damage)
+	log.Printf("PLAYER hits %s for %d.\n", e.Name, a.Damage)
 
 	if e.CurrentHp <= 0 {
+		log.Printf("PLAYER kills %s.\n", e.Name)
 		return fmt.Sprintf("Ability %s defeated %s with %d damage.", a.Name, e.Name, a.Damage)
 	}
 

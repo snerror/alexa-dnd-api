@@ -46,7 +46,7 @@ func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
 }
 
 func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
-	//var enemy Enemy
+	//var enemy *Enemy
 	var ability Ability
 
 	vars := mux.Vars(r)
@@ -57,9 +57,10 @@ func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO fix this
 	//for _, e := range enemies {
 	//	if e.ID == enemyId {
-	//		enemy = e
+	//		enemy = &e
 	//	}
 	//}
 	//

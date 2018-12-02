@@ -66,16 +66,22 @@ func (e *Enemy) CreatePreset(p string) error {
 }
 
 func (e *Enemy) AttackPlayer() string {
-	var ability *Ability
-	ability = &e.Abilities[0]
+	ability := &Ability{
+		"",
+		0,
+		0,
+		0,
+		0,
+	}
 
-	for _, a := range e.Abilities {
-		if (a.Damage > ability.Damage) && a.CurrentCD == 0 {
-			ability = &a
+	for i := 0; i < len(e.Abilities); i++ {
+		if (e.Abilities[i].Damage > ability.Damage) && e.Abilities[i].CurrentCD == 0 {
+			ability = &e.Abilities[i]
 		}
 
-		if a.CurrentCD > 0 {
-			a.CurrentCD--
+		if e.Abilities[i].CurrentCD > 0 {
+			e.Abilities[i].CurrentCD--
+			log.Printf("Cooldown for %s is now %d\n", e.Abilities[i].Name, e.Abilities[i].CurrentCD)
 		}
 	}
 
@@ -91,6 +97,7 @@ func (e *Enemy) AttackPlayer() string {
 
 	if ability.CD > 0 && ability.CurrentCD == 0 {
 		ability.CurrentCD = ability.CD
+		log.Printf("Cooldown for %s set to %d\n", ability.Name, ability.CurrentCD)
 	}
 
 	player.CurrentHp = player.CurrentHp - ability.Damage
