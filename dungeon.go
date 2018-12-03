@@ -11,21 +11,16 @@ type Dungeon struct {
 	cells      [][]int
 }
 
-//
-//func (d *Dungeon) Create(rows, cols int) *Dungeon {
-//
-//	return &Dungeon{c, h, v, cell, hor, ver}
-//}
+func (d *Dungeon) generate() {
+	GenerateDungeon(0, 0, 0)
 
-//func (d *Dungeon) generate(row, col int) {
-//	fmt.Printf("up %v\n", up)
-//	fmt.Printf("down %v\n", down)
-//	fmt.Printf("right %v\n", right)
-//	fmt.Printf("left %v\n", left)
-//
-//	d.cells[row][col] = down + right
-//	fmt.Printf("current cell value %v\n", d.cells[row][col])
-//}
+	for i := 0; i < d.rows; i++ {
+		for j := 0; j < d.cols; j++ {
+			fmt.Printf("%v ", dungeon.cells[i][j])
+		}
+		fmt.Printf("\n")
+	}
+}
 
 const (
 	up    = 1 << iota //1
