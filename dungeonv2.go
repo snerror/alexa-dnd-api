@@ -34,7 +34,7 @@ const (
 	left              //8
 )
 
-func GenerateDungeon(row, col int) {
+func GenerateDungeon(row, col, previousValue int) {
 	rand.Seed(time.Now().UnixNano())
 
 	if dungeon.cells[row][col] != 0 {
@@ -45,73 +45,87 @@ func GenerateDungeon(row, col int) {
 	dungeon.cells[row][col] = rand.Intn(16)
 	fmt.Printf("CELL %d %d GENERATED value %v\n", row, col, dungeon.cells[row][col])
 
+	var connectCells int
+
+	if previousValue == up {
+		connectCells = down
+	} else if previousValue == down {
+		connectCells = up
+	} else if previousValue == right {
+		connectCells = left
+	} else if previousValue == left {
+		connectCells = right
+	}
+
+	if dungeon.cells[row][col]&connectCells == 0 {
+		fmt.Printf("CELL %d %d NOT CONNECTED WITH %d.\n", row, col, connectCells)
+
+		dungeon.cells[row][col] = dungeon.cells[row][col] + connectCells
+		fmt.Printf("CELL %d %d VALUE SET TO %v\n", row, col, dungeon.cells[row][col])
+	}
+
 	if dungeon.cells[row][col] == 0 {
 		fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
-		dungeon.cells[row][col] = 0
-		GenerateDungeon(row, col)
+		GenerateDungeon(row, col, previousValue)
 	}
 
 	// Border edge case
 	if dungeon.cells[row][col]&up != 0 && row == 0 {
 		fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
 		dungeon.cells[row][col] = 0
-		GenerateDungeon(row, col)
+		GenerateDungeon(row, col, previousValue)
 	}
 
 	if dungeon.cells[row][col]&left != 0 && col == 0 {
 		fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
 		dungeon.cells[row][col] = 0
-		GenerateDungeon(row, col)
+		GenerateDungeon(row, col, previousValue)
 	}
 
 	if dungeon.cells[row][col]&down != 0 && row == dungeon.rows-1 {
 		fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
 		dungeon.cells[row][col] = 0
-		GenerateDungeon(row, col)
+		GenerateDungeon(row, col, previousValue)
 	}
 
 	if dungeon.cells[row][col]&right != 0 && col == dungeon.cols-1 {
 		fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
 		dungeon.cells[row][col] = 0
-		GenerateDungeon(row, col)
+		GenerateDungeon(row, col, previousValue)
 	}
 
 	// Generate next cell.
-	if dungeon.cells[row][col]&up != 0 && row != 0 {
+	if dungeon.cells[row][col]&up != 0 && row != 0 && up != connectCells {
 		fmt.Printf("UP to next CELL %d %d \n", row-1, col)
-		GenerateDungeon(row-1, col)
+		GenerateDungeon(row-1, col, up)
 	}
 
-	fmt.Printf("DEBUG - ROW: %d DUNGEON ROWS: %d \n", row, dungeon.rows-1)
-	if dungeon.cells[row][col]&down != 0 && row != dungeon.rows-1 {
+	if dungeon.cells[row][col]&down != 0 && row != dungeon.rows-1 && down != connectCells {
 		fmt.Printf("DOWN to next CELL %d %d \n", row+1, col)
-		GenerateDungeon(row+1, col)
+		GenerateDungeon(row+1, col, down)
 	}
 
-	if dungeon.cells[row][col]&left != 0 && col != 0 {
+	if dungeon.cells[row][col]&left != 0 && col != 0 && left != connectCells {
 		fmt.Printf("LEFT to next CELL %d %d \n", row, col-1)
-		GenerateDungeon(row, col-1)
+		GenerateDungeon(row, col-1, left)
 	}
 
-	if dungeon.cells[row][col]&right != 0 && col != dungeon.cols-1 {
+	if dungeon.cells[row][col]&right != 0 && col != dungeon.cols-1 && right != connectCells {
 		fmt.Printf("RIGHT to next CELL %d %d \n", row, col+1)
-		GenerateDungeon(row, col+1)
+		GenerateDungeon(row, col+1, right)
 	}
 
-	fmt.Printf("current cell value %v\n", dungeon.cells[row][col])
+	fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
+	GenerateDungeon(row, col, previousValue)
 }
 
 func (d *Dungeon) DrawDungeon() {
 
 	hWall := "+---"
 	hOpen := "+   "
-	leftWall := "|   "
-	rightWall := "   |"
-	leftRightWall := "|   |"
-	noWall := "    "
-	//vOpen := []byte("    ")
-	//rightCorner := []byte("+\n")
-	//rightWall := []byte("|\n")
+	wall := "|"
+	noWall := " "
+	betweenWalls := "   "
 
 	var drawRow string
 
@@ -124,32 +138,15 @@ func (d *Dungeon) DrawDungeon() {
 	drawRow = ""
 	for i := 0; i < d.rows; i++ {
 		for j := 0; j < d.cols; j++ {
-			if d.cells[i][j]&left == 0 && d.cells[i][j]&right != 0 {
-				drawRow = drawRow + leftWall
-			}
-
-			if d.cells[i][j]&left != 0 && d.cells[i][j]&right == 0 {
-				if j != 0 && d.cells[i][j-1]&right == 0 {
-					drawRow = drawRow[:len(drawRow)-1]
-					drawRow = drawRow + " "
-				}
-
-				drawRow = drawRow + rightWall
-			}
-
-			if d.cells[i][j]&left == 0 && d.cells[i][j]&right == 0 {
-				if j != 0 && d.cells[i][j-1]&right == 0 {
-					drawRow = drawRow[:len(drawRow)-1]
-					drawRow = drawRow + " "
-				}
-				drawRow = drawRow + leftRightWall
-			}
-
-			if d.cells[i][j]&left != 0 && d.cells[i][j]&right != 0 {
+			if d.cells[i][j]&left == 0 {
+				drawRow = drawRow + wall
+			} else {
 				drawRow = drawRow + noWall
 			}
+
+			drawRow = drawRow + betweenWalls
 		}
-		fmt.Printf("%v\n", drawRow)
+		fmt.Printf("%v|\n", drawRow)
 		drawRow = ""
 
 		for j := 0; j < d.cols; j++ {

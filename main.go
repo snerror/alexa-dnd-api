@@ -31,7 +31,17 @@ func main() {
 		},
 	}
 
-	GenerateDungeon(0, 0)
+	//dungeon = Dungeon{
+	//	3,
+	//	3,
+	//	[][]int{
+	//		{2, 14, 8},
+	//		{7, 7, 11},
+	//		{5, 13, 9},
+	//	},
+	//}
+
+	GenerateDungeon(0, 0, 0)
 
 	for i := 0; i < 3; i++ {
 		for j := 0; j < 3; j++ {
