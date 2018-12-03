@@ -78,6 +78,14 @@ func GenerateDungeon(row, col, previousValue int) {
 	dungeon.cells[row][col] = dungeon.cells[row][col] + previousCell
 	fmt.Printf("CELL %d %d CONNECTED TO PREVIOUS CELL, VALUE NOW %v\n", row, col, dungeon.cells[row][col])
 
+	generateEnemy := rand.Intn(5)
+	if generateEnemy == 1 {
+		var enemy Enemy
+		enemy.CreatePreset(ENEMY_SKELETON, row, col)
+		enemies = append(enemies, enemy)
+		fmt.Printf("CELL %d %d GENERATED ENEMY %s\n", row, col, enemy.Name)
+	}
+
 	// Generate next cell.
 	if dungeon.cells[row][col]&up != 0 && row != 0 && up != previousCell {
 		fmt.Printf("UP to next CELL %d %d \n", row-1, col)
@@ -111,7 +119,7 @@ func (d *Dungeon) DrawDungeon() {
 	noWall := " "
 	betweenWalls := "   "
 	playerPos := " P "
-	//enemyPos := " E "
+	enemyPos := " E "
 
 	var drawRow string
 
@@ -124,6 +132,14 @@ func (d *Dungeon) DrawDungeon() {
 	drawRow = ""
 	for i := 0; i < d.rows; i++ {
 		for j := 0; j < d.cols; j++ {
+			// Find enemy on this location
+			var enemy *Enemy
+			for k := 0; k < len(enemies); k++ {
+				if enemies[k].Position.X == i && enemies[k].Position.Y == j {
+					enemy = &enemies[k]
+				}
+			}
+
 			if d.cells[i][j]&left == 0 {
 				drawRow = drawRow + wall
 			} else {
@@ -132,6 +148,8 @@ func (d *Dungeon) DrawDungeon() {
 
 			if player.Position.X == i && player.Position.Y == j {
 				drawRow = drawRow + playerPos
+			} else if enemy != nil {
+				drawRow = drawRow + enemyPos
 			} else {
 				drawRow = drawRow + betweenWalls
 			}

@@ -35,11 +35,6 @@ func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var tempEnemy Enemy
-	tempEnemy.CreatePreset(ENEMY_SKELETON)
-
-	enemies = append(enemies, tempEnemy)
-
 	buildResponse(w, r, "player created")
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
