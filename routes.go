@@ -22,13 +22,13 @@ var routes = Routes{
 	},
 	Route{
 		"GetPlayerClass",
-		"Get",
+		"GET",
 		"/player",
 		GetPlayerClassAction,
 	},
 	Route{
 		"SetPlayerClass",
-		"POST",
+		"GET",
 		"/player/class/{className}",
 		SetPlayerClassAction,
 	},
