@@ -110,6 +110,8 @@ func (d *Dungeon) DrawDungeon() {
 	wall := "|"
 	noWall := " "
 	betweenWalls := "   "
+	playerPos := " P "
+	//enemyPos := " E "
 
 	var drawRow string
 
@@ -128,7 +130,11 @@ func (d *Dungeon) DrawDungeon() {
 				drawRow = drawRow + noWall
 			}
 
-			drawRow = drawRow + betweenWalls
+			if player.Position.X == i && player.Position.Y == j {
+				drawRow = drawRow + playerPos
+			} else {
+				drawRow = drawRow + betweenWalls
+			}
 		}
 		fmt.Printf("%v|\n", drawRow)
 		drawRow = ""

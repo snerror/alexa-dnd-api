@@ -26,6 +26,7 @@ type Player struct {
 	MaxHp      int
 	ArmorClass int
 	Abilities  []Ability
+	Position   Position
 }
 
 type Ability struct {
@@ -34,6 +35,11 @@ type Ability struct {
 	Damage    int
 	CD        int
 	CurrentCD int
+}
+
+type Position struct {
+	X int
+	Y int
 }
 
 func (p *Player) CreateFromTemplate(t string) error {
@@ -67,6 +73,8 @@ func (p *Player) CreateFromTemplate(t string) error {
 		p.Abilities = append(p.Abilities, a1)
 		p.Abilities = append(p.Abilities, a2)
 	}
+
+	p.Position = Position{0, 0}
 
 	return nil
 }

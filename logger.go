@@ -27,4 +27,5 @@ func Logger(inner http.Handler, name string) http.Handler {
 func logAppState() {
 	log.Printf("PLAYER: %+v\n", player)
 	log.Printf("ENEMIES: %+v\n", enemies)
+	dungeon.DrawDungeon()
 }
