@@ -19,9 +19,10 @@ type Enemy struct {
 	MaxHp      int
 	ArmorClass int
 	Abilities  []Ability
+	Position   Position
 }
 
-func (e *Enemy) CreatePreset(p string) error {
+func (e *Enemy) CreatePreset(p string, x int, y int) error {
 	if p != ENEMY_SKELETON && p != ENEMY_SPIDER {
 		return fmt.Errorf("unknown enemy preset")
 	}
@@ -59,7 +60,9 @@ func (e *Enemy) CreatePreset(p string) error {
 		e.ArmorClass = 15
 	}
 
+	e.Position = Position{x, y}
 	e.ID = ENEMY_ID
+
 	ENEMY_ID++
 
 	return nil
