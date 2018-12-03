@@ -37,80 +37,69 @@ const (
 func GenerateDungeon(row, col, previousValue int) {
 	rand.Seed(time.Now().UnixNano())
 
-	if dungeon.cells[row][col] != 0 {
-		fmt.Printf("CELL %d %d already generated with value %d. SKIPPING\n", row, col, dungeon.cells[row][col])
+	var previousCell int
+
+	if previousValue == up {
+		previousCell = down
+	} else if previousValue == down {
+		previousCell = up
+	} else if previousValue == right {
+		previousCell = left
+	} else if previousValue == left {
+		previousCell = right
+	}
+
+	var possiblePaths []int
+
+	if row != 0 && dungeon.cells[row-1][col] == 0 {
+		possiblePaths = append(possiblePaths, up)
+	}
+
+	if row != dungeon.rows-1 && dungeon.cells[row+1][col] == 0 {
+		possiblePaths = append(possiblePaths, down)
+	}
+
+	if col != 0 && dungeon.cells[row][col-1] == 0 {
+		possiblePaths = append(possiblePaths, left)
+	}
+
+	if col != dungeon.cols-1 && dungeon.cells[row][col+1] == 0 {
+		possiblePaths = append(possiblePaths, right)
+	}
+
+	if len(possiblePaths) == 0 {
+		fmt.Printf("CELL %d %d reached DEAD END %d. SKIPPING\n", row, col, dungeon.cells[row][col])
 		return
 	}
 
-	dungeon.cells[row][col] = rand.Intn(16)
+	if dungeon.cells[row][col] != 0 {
+		fmt.Printf("CELL %d %d ALREADY GENERATED  %d. SKIPPING\n", row, col, dungeon.cells[row][col])
+		return
+	}
+
+	dungeon.cells[row][col] = possiblePaths[rand.Int()%len(possiblePaths)]
 	fmt.Printf("CELL %d %d GENERATED value %v\n", row, col, dungeon.cells[row][col])
 
-	var connectCells int
-
-	if previousValue == up {
-		connectCells = down
-	} else if previousValue == down {
-		connectCells = up
-	} else if previousValue == right {
-		connectCells = left
-	} else if previousValue == left {
-		connectCells = right
-	}
-
-	if dungeon.cells[row][col]&connectCells == 0 {
-		fmt.Printf("CELL %d %d NOT CONNECTED WITH %d.\n", row, col, connectCells)
-
-		dungeon.cells[row][col] = dungeon.cells[row][col] + connectCells
-		fmt.Printf("CELL %d %d VALUE SET TO %v\n", row, col, dungeon.cells[row][col])
-	}
-
-	if dungeon.cells[row][col] == 0 {
-		fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
-		GenerateDungeon(row, col, previousValue)
-	}
-
-	// Border edge case
-	if dungeon.cells[row][col]&up != 0 && row == 0 {
-		fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
-		dungeon.cells[row][col] = 0
-		GenerateDungeon(row, col, previousValue)
-	}
-
-	if dungeon.cells[row][col]&left != 0 && col == 0 {
-		fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
-		dungeon.cells[row][col] = 0
-		GenerateDungeon(row, col, previousValue)
-	}
-
-	if dungeon.cells[row][col]&down != 0 && row == dungeon.rows-1 {
-		fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
-		dungeon.cells[row][col] = 0
-		GenerateDungeon(row, col, previousValue)
-	}
-
-	if dungeon.cells[row][col]&right != 0 && col == dungeon.cols-1 {
-		fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
-		dungeon.cells[row][col] = 0
-		GenerateDungeon(row, col, previousValue)
-	}
+	dungeon.cells[row][col] = dungeon.cells[row][col] + previousCell
+	fmt.Printf("CELL %d %d CONNECTED TO PREVIOUS CELL, VALUE NOW %v\n", row, col, dungeon.cells[row][col])
 
 	// Generate next cell.
-	if dungeon.cells[row][col]&up != 0 && row != 0 && up != connectCells {
+	if dungeon.cells[row][col]&up != 0 && row != 0 && up != previousCell {
 		fmt.Printf("UP to next CELL %d %d \n", row-1, col)
 		GenerateDungeon(row-1, col, up)
 	}
 
-	if dungeon.cells[row][col]&down != 0 && row != dungeon.rows-1 && down != connectCells {
+	if dungeon.cells[row][col]&down != 0 && row != dungeon.rows-1 && down != previousCell {
 		fmt.Printf("DOWN to next CELL %d %d \n", row+1, col)
 		GenerateDungeon(row+1, col, down)
 	}
 
-	if dungeon.cells[row][col]&left != 0 && col != 0 && left != connectCells {
+	if dungeon.cells[row][col]&left != 0 && col != 0 && left != previousCell {
 		fmt.Printf("LEFT to next CELL %d %d \n", row, col-1)
 		GenerateDungeon(row, col-1, left)
 	}
 
-	if dungeon.cells[row][col]&right != 0 && col != dungeon.cols-1 && right != connectCells {
+	if dungeon.cells[row][col]&right != 0 && col != dungeon.cols-1 && right != previousCell {
 		fmt.Printf("RIGHT to next CELL %d %d \n", row, col+1)
 		GenerateDungeon(row, col+1, right)
 	}
