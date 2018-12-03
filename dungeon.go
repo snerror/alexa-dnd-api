@@ -12,8 +12,7 @@ type Dungeon struct {
 }
 
 func (d *Dungeon) generate() {
-	GenerateDungeon(0, 0, 0)
-
+	d.generateRecursive(0, 0, 0)
 	for i := 0; i < d.rows; i++ {
 		for j := 0; j < d.cols; j++ {
 			fmt.Printf("%v ", dungeon.cells[i][j])
@@ -29,7 +28,7 @@ const (
 	left              //8
 )
 
-func GenerateDungeon(row, col, previousValue int) {
+func (d *Dungeon) generateRecursive(row, col, previousValue int) {
 	rand.Seed(time.Now().UnixNano())
 
 	var previousCell int
@@ -89,30 +88,29 @@ func GenerateDungeon(row, col, previousValue int) {
 	// Generate next cell.
 	if dungeon.cells[row][col]&up != 0 && row != 0 && up != previousCell {
 		fmt.Printf("UP to next CELL %d %d \n", row-1, col)
-		GenerateDungeon(row-1, col, up)
+		d.generateRecursive(row-1, col, up)
 	}
 
 	if dungeon.cells[row][col]&down != 0 && row != dungeon.rows-1 && down != previousCell {
 		fmt.Printf("DOWN to next CELL %d %d \n", row+1, col)
-		GenerateDungeon(row+1, col, down)
+		d.generateRecursive(row+1, col, down)
 	}
 
 	if dungeon.cells[row][col]&left != 0 && col != 0 && left != previousCell {
 		fmt.Printf("LEFT to next CELL %d %d \n", row, col-1)
-		GenerateDungeon(row, col-1, left)
+		d.generateRecursive(row, col-1, left)
 	}
 
 	if dungeon.cells[row][col]&right != 0 && col != dungeon.cols-1 && right != previousCell {
 		fmt.Printf("RIGHT to next CELL %d %d \n", row, col+1)
-		GenerateDungeon(row, col+1, right)
+		d.generateRecursive(row, col+1, right)
 	}
 
 	fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
-	GenerateDungeon(row, col, previousValue)
+	d.generateRecursive(row, col, previousValue)
 }
 
 func (d *Dungeon) DrawDungeon() {
-
 	hWall := "+---"
 	hOpen := "+   "
 	wall := "|"
@@ -167,4 +165,56 @@ func (d *Dungeon) DrawDungeon() {
 		fmt.Printf("%v+\n", drawRow)
 		drawRow = ""
 	}
+}
+
+func (d *Dungeon) CheckMoveDirection(x, y, direction int) bool {
+	if direction == up {
+		if x == 0 {
+			return false
+		}
+
+		if d.cells[x][y]&up == 0 {
+			return false
+		}
+
+		return true
+	}
+
+	if direction == down {
+		if x == d.rows-1 {
+			return false
+		}
+
+		if d.cells[x][y]&down == 0 {
+			return false
+		}
+
+		return true
+	}
+
+	if direction == left {
+		if y == 0 {
+			return false
+		}
+
+		if d.cells[x][y]&left == 0 {
+			return false
+		}
+
+		return true
+	}
+
+	if direction == right {
+		if y == d.cols-1 {
+			return false
+		}
+
+		if d.cells[x][y]&right == 0 {
+			return false
+		}
+
+		return true
+	}
+
+	return false
 }

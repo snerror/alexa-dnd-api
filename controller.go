@@ -81,6 +81,13 @@ func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
 	buildResponse(w, r, player.AttackEnemy(ability, enemy))
 }
 
+func MovePlayer(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	direction := vars["direction"]
+
+	buildResponse(w, r, player.Move(&dungeon, direction))
+}
+
 func EnemyAttackPlayerAction(w http.ResponseWriter, r *http.Request) {
 	var enemy Enemy
 

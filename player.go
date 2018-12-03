@@ -115,6 +115,52 @@ func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 	return fmt.Sprintf("Ability %s hit %s with %d damage. %s", a.Name, e.Name, a.Damage, enemyAttackResponse)
 }
 
+func (p *Player) Move(d *Dungeon, strDirection string) string {
+	direction := 0
+
+	if strDirection == "up" {
+		direction = up
+	}
+
+	if strDirection == "down" {
+		direction = down
+	}
+
+	if strDirection == "left" {
+		direction = left
+	}
+
+	if strDirection == "right" {
+		direction = right
+	}
+
+	if direction == 0 {
+		return "unknown direction given"
+	}
+
+	if d.CheckMoveDirection(p.Position.X, p.Position.Y, direction) == false {
+		return "Unable to move there. Try again."
+	}
+
+	if direction == up {
+		player.Position.X--
+	}
+
+	if direction == down {
+		player.Position.X++
+	}
+
+	if direction == right {
+		player.Position.Y++
+	}
+
+	if direction == left {
+		player.Position.Y--
+	}
+
+	return "Successfully moved player"
+}
+
 func DiceRoll() int {
 	i := rand.Intn(20)
 	log.Printf("Dice rolled %d.\n", i)
