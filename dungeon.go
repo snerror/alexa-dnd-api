@@ -1,114 +1,151 @@
 package main
 
+import (
+	"fmt"
+	"math/rand"
+	"time"
+)
+
+type Dungeon struct {
+	rows, cols int
+	cells      [][]int
+}
+
 //
-//import (
-//	"bytes"
-//	"math/rand"
-//	"time"
-//)
+//func (d *Dungeon) Create(rows, cols int) *Dungeon {
 //
-//type Dungeon struct {
-//	c, h, v        []byte
-//	cell, hor, ver [][]byte
-//}
-//
-//func DrawDungeon(rows, cols int) *Dungeon {
-//	c := make([]byte, rows*cols)
-//	h := bytes.Repeat([]byte{'-'}, rows*cols)
-//	v := bytes.Repeat([]byte{'|'}, rows*cols)
-//	cell := make([][]byte, rows)
-//	hor := make([][]byte, rows)
-//	ver := make([][]byte, rows)
-//	for i := range hor {
-//		cell[i] = c[i*cols : (i+1)*cols]
-//		hor[i] = h[i*cols : (i+1)*cols]
-//		ver[i] = v[i*cols : (i+1)*cols]
-//	}
 //	return &Dungeon{c, h, v, cell, hor, ver}
 //}
+
+//func (d *Dungeon) generate(row, col int) {
+//	fmt.Printf("up %v\n", up)
+//	fmt.Printf("down %v\n", down)
+//	fmt.Printf("right %v\n", right)
+//	fmt.Printf("left %v\n", left)
 //
-//func (m *Dungeon) String() string {
-//	hWall := []byte("+---")
-//	hOpen := []byte("+   ")
-//	vWall := []byte("|   ")
-//	vOpen := []byte("    ")
-//	rightCorner := []byte("+\n")
-//	rightWall := []byte("|\n")
-//	var b []byte
-//	// for all rows
-//	for r, hw := range m.hor {
-//		// draw h walls
-//		for _, h := range hw {
-//			if h == '-' || r == 0 {
-//				b = append(b, hWall...)
-//			} else {
-//				b = append(b, hOpen...)
-//			}
-//		}
-//		b = append(b, rightCorner...)
-//		// draw v walls
-//		for c, vw := range m.ver[r] {
-//			if vw == '|' || c == 0 {
-//				b = append(b, vWall...)
-//			} else {
-//				b = append(b, vOpen...)
-//			}
-//			// draw cell contents
-//			if m.cell[r][c] != 0 {
-//				b[len(b)-2] = m.cell[r][c]
-//			}
-//		}
-//		b = append(b, rightWall...)
-//	}
-//	// draw bottom edge of maze
-//	for _ = range m.hor[0] {
-//		b = append(b, hWall...)
-//	}
-//	b = append(b, rightCorner...)
-//	return string(b)
+//	d.cells[row][col] = down + right
+//	fmt.Printf("current cell value %v\n", d.cells[row][col])
 //}
-//
-//func (m *Dungeon) generator() {
-//	// Allocate the maze with recursive method
-//	m.recursion(rand.Intn(len(m.cell)), rand.Intn(len(m.cell[0])))
-//}
-//
-//const (
-//	up = iota
-//	down
-//	right
-//	left
-//)
-//
-//func (m *Dungeon) recursion(row, col int) {
-//	rand.Seed(time.Now().UnixNano())
-//	m.cell[row][col] = ' '
-//	for _, wall := range rand.Perm(4) {
-//		switch wall {
-//		//　Whether cells up is out or not
-//		case up:
-//			if row > 0 && m.cell[row-1][col] == 0 {
-//				m.hor[row][col] = 0
-//				m.recursion(row-1, col)
-//			}
-//			// Whether cells down is out or not
-//		case down:
-//			if row < len(m.cell)-1 && m.cell[row+1][col] == 0 {
-//				m.hor[row+1][col] = 0
-//				m.recursion(row+1, col)
-//			}
-//			// Whether cells left is out or not
-//		case left:
-//			if col > 0 && m.cell[row][col-1] == 0 {
-//				m.ver[row][col] = 0
-//				m.recursion(row, col-1)
-//			}
-//			// Whether cells to the right is out or not
-//		case right:
-//			if col < len(m.cell[0])-1 && m.cell[row][col+1] == 0 {
-//				m.ver[row][col+1] = 0
-//				m.recursion(row, col+1)
-//			}
-//		}
-//	}
-//}
+
+const (
+	up    = 1 << iota //1
+	down              //2
+	right             //4
+	left              //8
+)
+
+func GenerateDungeon(row, col, previousValue int) {
+	rand.Seed(time.Now().UnixNano())
+
+	var previousCell int
+
+	if previousValue == up {
+		previousCell = down
+	} else if previousValue == down {
+		previousCell = up
+	} else if previousValue == right {
+		previousCell = left
+	} else if previousValue == left {
+		previousCell = right
+	}
+
+	var possiblePaths []int
+
+	if row != 0 && dungeon.cells[row-1][col] == 0 {
+		possiblePaths = append(possiblePaths, up)
+	}
+
+	if row != dungeon.rows-1 && dungeon.cells[row+1][col] == 0 {
+		possiblePaths = append(possiblePaths, down)
+	}
+
+	if col != 0 && dungeon.cells[row][col-1] == 0 {
+		possiblePaths = append(possiblePaths, left)
+	}
+
+	if col != dungeon.cols-1 && dungeon.cells[row][col+1] == 0 {
+		possiblePaths = append(possiblePaths, right)
+	}
+
+	if len(possiblePaths) == 0 {
+		fmt.Printf("CELL %d %d reached DEAD END %d. SKIPPING\n", row, col, dungeon.cells[row][col])
+		return
+	}
+
+	if dungeon.cells[row][col] != 0 {
+		fmt.Printf("CELL %d %d ALREADY GENERATED  %d. SKIPPING\n", row, col, dungeon.cells[row][col])
+		return
+	}
+
+	dungeon.cells[row][col] = possiblePaths[rand.Int()%len(possiblePaths)]
+	fmt.Printf("CELL %d %d GENERATED value %v\n", row, col, dungeon.cells[row][col])
+
+	dungeon.cells[row][col] = dungeon.cells[row][col] + previousCell
+	fmt.Printf("CELL %d %d CONNECTED TO PREVIOUS CELL, VALUE NOW %v\n", row, col, dungeon.cells[row][col])
+
+	// Generate next cell.
+	if dungeon.cells[row][col]&up != 0 && row != 0 && up != previousCell {
+		fmt.Printf("UP to next CELL %d %d \n", row-1, col)
+		GenerateDungeon(row-1, col, up)
+	}
+
+	if dungeon.cells[row][col]&down != 0 && row != dungeon.rows-1 && down != previousCell {
+		fmt.Printf("DOWN to next CELL %d %d \n", row+1, col)
+		GenerateDungeon(row+1, col, down)
+	}
+
+	if dungeon.cells[row][col]&left != 0 && col != 0 && left != previousCell {
+		fmt.Printf("LEFT to next CELL %d %d \n", row, col-1)
+		GenerateDungeon(row, col-1, left)
+	}
+
+	if dungeon.cells[row][col]&right != 0 && col != dungeon.cols-1 && right != previousCell {
+		fmt.Printf("RIGHT to next CELL %d %d \n", row, col+1)
+		GenerateDungeon(row, col+1, right)
+	}
+
+	fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
+	GenerateDungeon(row, col, previousValue)
+}
+
+func (d *Dungeon) DrawDungeon() {
+
+	hWall := "+---"
+	hOpen := "+   "
+	wall := "|"
+	noWall := " "
+	betweenWalls := "   "
+
+	var drawRow string
+
+	for i := 0; i < d.cols; i++ {
+		drawRow = drawRow + hWall
+	}
+
+	fmt.Printf("%v+\n", drawRow)
+
+	drawRow = ""
+	for i := 0; i < d.rows; i++ {
+		for j := 0; j < d.cols; j++ {
+			if d.cells[i][j]&left == 0 {
+				drawRow = drawRow + wall
+			} else {
+				drawRow = drawRow + noWall
+			}
+
+			drawRow = drawRow + betweenWalls
+		}
+		fmt.Printf("%v|\n", drawRow)
+		drawRow = ""
+
+		for j := 0; j < d.cols; j++ {
+			if d.cells[i][j]&down == 0 {
+				drawRow = drawRow + hWall
+			} else {
+				drawRow = drawRow + hOpen
+			}
+		}
+		fmt.Printf("%v+\n", drawRow)
+		drawRow = ""
+	}
+}
