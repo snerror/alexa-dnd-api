@@ -114,9 +114,9 @@ func EnemyAttackPlayerAction(w http.ResponseWriter, r *http.Request) {
 func buildResponse(w http.ResponseWriter, r *http.Request, value string) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	if err := json.NewEncoder(w).Encode(map[string]interface{}{
-		"alexaResponsevalue": value,
-		"player":             player,
-		"enemies":            enemies,
+		"alexaResponse": value,
+		"player":        player,
+		"enemies":       enemies,
 	}); err != nil {
 		serverError(w, r, err)
 		return
