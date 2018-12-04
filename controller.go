@@ -166,6 +166,10 @@ func MovePlayer(w http.ResponseWriter, r *http.Request) {
 }
 
 func PlayerAbilitiesAction(w http.ResponseWriter, r *http.Request) {
+	if isPlayerCreated() == false {
+		buildResponse(w, r, "You must choose a class first")
+		return
+	}
 	text := ""
 
 	for i := 0; i < len(player.Abilities); i++ {
