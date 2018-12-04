@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"strconv"
 )
 
 var (
@@ -18,6 +19,7 @@ type Player struct {
 	CurrentHp  int
 	MaxHp      int
 	ArmorClass int
+	Level      int
 	Experience int
 	Abilities  []Ability
 	Position   Position
@@ -54,6 +56,7 @@ func (p *Player) CreateFromTemplate(t string) error {
 	}
 
 	p.Experience = 0
+	p.Level = 1
 	p.Position = Position{0, 0}
 
 	return nil
@@ -84,7 +87,21 @@ func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 	if e.CurrentHp <= 0 {
 		log.Printf("PLAYER kills %s.\n", e.Name)
 		p.Experience += e.Experience
-		return fmt.Sprintf("Ability %s defeated %s with %d damage.", a.Name, e.Name, a.Damage)
+
+		defeatedEnemyText := fmt.Sprintf("Ability %s defeated %s with %d damage.", a.Name, e.Name, a.Damage)
+		levelUpText := ""
+
+		if p.Experience > 5 {
+			p.MaxHp += 2
+			p.CurrentHp = p.MaxHp
+			p.ArmorClass += 1
+			p.Experience = 0
+			p.Level++
+
+			levelUpText = " Congratulations you are now level " + strconv.Itoa(p.Level) + " , your stats increased and your health refiled. Your HP is now " + strconv.Itoa(p.MaxHp) + " and your Armour Class is " + strconv.Itoa(p.ArmorClass) + "."
+		}
+
+		return defeatedEnemyText + levelUpText
 	}
 
 	return fmt.Sprintf("Ability %s hit %s with %d damage.", a.Name, e.Name, a.Damage)
