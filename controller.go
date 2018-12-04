@@ -165,18 +165,7 @@ func MovePlayer(w http.ResponseWriter, r *http.Request) {
 func ResetAction(w http.ResponseWriter, r *http.Request) {
 	enemies = []Enemy{}
 	player = Player{}
-	dungeon = Dungeon{
-		5,
-		5,
-		[][]int{
-			{0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0},
-		},
-	}
-
+	dungeon = CreateDungeon(10, 30)
 	dungeon.generate()
 
 	buildResponse(w, r, "Dungeon reset successfully.")
