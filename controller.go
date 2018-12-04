@@ -141,7 +141,25 @@ func MovePlayer(w http.ResponseWriter, r *http.Request) {
 		enemyDetectedText = " A " + e.Name + " emerges from the dark."
 	}
 
-	buildResponse(w, r, movePlayerText+enemyDetectedText)
+	availablePathsText := " Available paths are "
+	if dungeon.cells[player.Position.X][player.Position.Y]&up == 1 {
+		availablePathsText += " up,"
+	}
+
+	if dungeon.cells[player.Position.X][player.Position.Y]&down == 1 {
+		availablePathsText += " down,"
+	}
+
+	if dungeon.cells[player.Position.X][player.Position.Y]&right == 1 {
+		availablePathsText += " right,"
+	}
+
+	if dungeon.cells[player.Position.X][player.Position.Y]&left == 1 {
+		availablePathsText += " left,"
+	}
+	availablePathsText += "."
+
+	buildResponse(w, r, movePlayerText+availablePathsText+enemyDetectedText)
 }
 
 func ResetAction(w http.ResponseWriter, r *http.Request) {
