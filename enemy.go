@@ -18,6 +18,7 @@ type Enemy struct {
 	CurrentHp  int
 	MaxHp      int
 	ArmorClass int
+	Experience int
 	Abilities  []Ability
 	Position   Position
 }
@@ -32,6 +33,7 @@ func (e *Enemy) CreatePreset(p string, x int, y int) error {
 		e.CurrentHp = 1
 		e.MaxHp = 1
 		e.ArmorClass = 16
+		e.Experience = 2
 
 		a1 := Ability{
 			Name:      "Slice",
@@ -58,6 +60,26 @@ func (e *Enemy) CreatePreset(p string, x int, y int) error {
 		e.CurrentHp = 1
 		e.MaxHp = 1
 		e.ArmorClass = 15
+		e.Experience = 2
+
+		a1 := Ability{
+			Name:      "Bite",
+			Attack:    6,
+			Damage:    2,
+			CD:        1,
+			CurrentCD: 0,
+		}
+
+		a2 := Ability{
+			Name:      "Strike",
+			Attack:    11,
+			Damage:    1,
+			CD:        0,
+			CurrentCD: 0,
+		}
+
+		e.Abilities = append(e.Abilities, a1)
+		e.Abilities = append(e.Abilities, a2)
 	}
 
 	e.Position = Position{x, y}
@@ -110,5 +132,5 @@ func (e *Enemy) AttackPlayer() string {
 		return fmt.Sprintf("You died.")
 	}
 
-	return fmt.Sprintf("You have been hit with %s for %d.", ability.Name, ability.Damage)
+	return fmt.Sprintf("You have been hit with %s for %d. Your HP is now %s.", ability.Name, ability.Damage, player.CurrentHp)
 }

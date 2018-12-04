@@ -18,6 +18,7 @@ type Player struct {
 	CurrentHp  int
 	MaxHp      int
 	ArmorClass int
+	Experience int
 	Abilities  []Ability
 	Position   Position
 }
@@ -67,6 +68,7 @@ func (p *Player) CreateFromTemplate(t string) error {
 		p.Abilities = append(p.Abilities, a2)
 	}
 
+	p.Experience = 0
 	p.Position = Position{0, 0}
 
 	return nil
@@ -96,6 +98,7 @@ func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 
 	if e.CurrentHp <= 0 {
 		log.Printf("PLAYER kills %s.\n", e.Name)
+		p.Experience += e.Experience
 		return fmt.Sprintf("Ability %s defeated %s with %d damage.", a.Name, e.Name, a.Damage)
 	}
 
