@@ -80,7 +80,7 @@ func (d *Dungeon) generateRecursive(row, col, previousValue int) {
 
 	if len(possiblePaths) == 0 {
 		if dungeon.cells[row][col] == 0 {
-			dungeon.cells[row][col] = deadend
+			dungeon.cells[row][col] += deadend
 		}
 		fmt.Printf("CELL %d %d reached DEAD END %d. RETURNING TO NODE BEFORE\n", row, col, dungeon.cells[row][col])
 		return
