@@ -11,6 +11,20 @@ type Dungeon struct {
 	cells      [][]int
 }
 
+func CreateDungeon(rows, cols int) Dungeon {
+	cells := make([][]int, rows)
+	c := make([]int, rows*cols)
+
+	for i := 0; i < rows; i++ {
+		cells[i] = c[i*cols : (i+1)*cols]
+		for j := 0; j < cols; j++ {
+			cells[i][j] = 0
+		}
+	}
+
+	return Dungeon{rows, cols, cells}
+}
+
 func (d *Dungeon) generate() {
 	d.generateRecursive(0, 0, 0)
 	for i := 0; i < d.rows; i++ {

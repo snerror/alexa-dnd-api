@@ -6,30 +6,15 @@ import (
 )
 
 var (
-	dungeon             = Dungeon{}
-	player              Player
-	enemies             []Enemy
-	state               string
-	STATE_INITIAL       = "initial"
-	STATE_COMBAT_PLAYER = "combat_player"
-	STATE_COMBAT_ENEMY  = "combat_enemy"
+	dungeon = Dungeon{}
+	player  Player
+	enemies []Enemy
 )
 
 func main() {
 	router := NewRouter()
 
-	dungeon = Dungeon{
-		5,
-		5,
-		[][]int{
-			{0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 0},
-		},
-	}
-
+	dungeon = CreateDungeon(10, 30)
 	dungeon.generate()
 	dungeon.DrawDungeon()
 
