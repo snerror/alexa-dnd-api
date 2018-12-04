@@ -80,9 +80,16 @@ func (d *Dungeon) generateRecursive(row, col, previousValue int) {
 	generateEnemy := rand.Intn(5)
 	if generateEnemy == 1 {
 		var enemy Enemy
-		enemy.CreatePreset(ENEMY_SKELETON, row, col)
-		enemies = append(enemies, enemy)
-		fmt.Printf("CELL %d %d GENERATED ENEMY %s\n", row, col, enemy.Name)
+
+		possibleEnemies := []string{EnemySkeleton, EnemySpider, EnemyWraith, EnemyZombie, EnemyGargoyle, EnemyBlazingSkeleton}
+
+		err := enemy.CreatePreset(possibleEnemies[rand.Int()%len(possibleEnemies)], row, col)
+		if err != nil {
+			fmt.Printf("Error while generating enemy: %s\n", err)
+		} else {
+			enemies = append(enemies, enemy)
+			fmt.Printf("CELL %d %d GENERATED ENEMY %s\n", row, col, enemy.Name)
+		}
 	}
 
 	// Generate next cell.

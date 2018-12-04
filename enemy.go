@@ -6,11 +6,15 @@ import (
 )
 
 var (
-	ENEMY_SKELETON = "skeleton"
-	ENEMY_SPIDER   = "spider"
+	EnemySkeleton        = "skeleton"
+	EnemySpider          = "spider"
+	EnemyWraith          = "wraith"
+	EnemyZombie          = "zombie"
+	EnemyGargoyle        = "gargoyle"
+	EnemyBlazingSkeleton = "blazing skeleton"
 )
 
-var ENEMY_ID = 0
+var EnemyId = 0
 
 type Enemy struct {
 	ID         int
@@ -24,68 +28,38 @@ type Enemy struct {
 }
 
 func (e *Enemy) CreatePreset(p string, x int, y int) error {
-	if p != ENEMY_SKELETON && p != ENEMY_SPIDER {
-		return fmt.Errorf("unknown enemy preset")
+	if p == EnemySkeleton {
+		*e = TemplateEnemySkeleton
 	}
 
-	if p == ENEMY_SKELETON {
-		e.Name = ENEMY_SKELETON
-		e.CurrentHp = 1
-		e.MaxHp = 1
-		e.ArmorClass = 16
-		e.Experience = 2
-
-		a1 := Ability{
-			Name:      "Slice",
-			Attack:    9,
-			Damage:    2,
-			CD:        2,
-			CurrentCD: 0,
-		}
-
-		a2 := Ability{
-			Name:      "Strike",
-			Attack:    7,
-			Damage:    1,
-			CD:        0,
-			CurrentCD: 0,
-		}
-
-		e.Abilities = append(e.Abilities, a1)
-		e.Abilities = append(e.Abilities, a2)
+	if p == EnemySpider {
+		*e = TemplateEnemySpider
 	}
 
-	if p == ENEMY_SPIDER {
-		e.Name = ENEMY_SPIDER
-		e.CurrentHp = 1
-		e.MaxHp = 1
-		e.ArmorClass = 15
-		e.Experience = 2
+	if p == EnemyWraith {
+		*e = TemplateEnemyWraith
+	}
 
-		a1 := Ability{
-			Name:      "Bite",
-			Attack:    6,
-			Damage:    2,
-			CD:        1,
-			CurrentCD: 0,
-		}
+	if p == EnemyZombie {
+		*e = TemplateEnemyZombie
+	}
 
-		a2 := Ability{
-			Name:      "Strike",
-			Attack:    11,
-			Damage:    1,
-			CD:        0,
-			CurrentCD: 0,
-		}
+	if p == EnemyGargoyle {
+		*e = TemplateEnemyGargoyle
+	}
 
-		e.Abilities = append(e.Abilities, a1)
-		e.Abilities = append(e.Abilities, a2)
+	if p == EnemyBlazingSkeleton {
+		*e = TemplateEnemyBlazingSkeleton
+	}
+
+	if &p == nil {
+		return fmt.Errorf("unknown enemy preset %s \n", p)
 	}
 
 	e.Position = Position{x, y}
-	e.ID = ENEMY_ID
+	e.ID = EnemyId
 
-	ENEMY_ID++
+	EnemyId++
 
 	return nil
 }

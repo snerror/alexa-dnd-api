@@ -1,5 +1,6 @@
 package main
 
+// Class templates
 var TemplateClassRogue = Player{
 	Name:       "Kat",
 	Class:      PlayerClassRogue,
@@ -27,6 +28,7 @@ var TemplateClassFighter = Player{
 	Abilities:  []Ability{TemplateAbilityCleave, TemplateAbilityStrike, TemplateAbilityTideOfIron},
 }
 
+// Ability templates
 var TemplateAbilityBackstab = Ability{
 	Name:      "Backstab",
 	Attack:    10,
@@ -81,4 +83,107 @@ var TemplateAbilityTideOfIron = Ability{
 	Damage:    2,
 	CD:        2,
 	CurrentCD: 0,
+}
+
+var TemplateAbilitySlice = Ability{
+	Name:      "Slice",
+	Attack:    9,
+	Damage:    2,
+	CD:        2,
+	CurrentCD: 0,
+}
+
+var TemplateAbilityBite = Ability{
+	Name:      "Bite",
+	Attack:    6,
+	Damage:    2,
+	CD:        1,
+	CurrentCD: 0,
+}
+
+var TemplateAbilityDeathShriek = Ability{
+	Name:      "Death shriek",
+	Attack:    6,
+	Damage:    3,
+	CD:        0,
+	CurrentCD: 0,
+}
+
+var TemplateAbilityClaw = Ability{
+	Name:      "Claw",
+	Attack:    5,
+	Damage:    1,
+	CD:        0,
+	CurrentCD: 0,
+}
+
+var TemplateAbilityStoneClaw = Ability{
+	Name:      "Stone claw",
+	Attack:    8,
+	Damage:    2,
+	CD:        0,
+	CurrentCD: 0,
+}
+
+var TemplateAbilityFlameStrike = Ability{
+	Name:      "Flame strike",
+	Attack:    7,
+	Damage:    2,
+	CD:        0,
+	CurrentCD: 0,
+}
+
+// Enemy templates
+var TemplateEnemySkeleton = Enemy{
+	Name:       EnemySkeleton,
+	CurrentHp:  1,
+	MaxHp:      1,
+	ArmorClass: 16,
+	Experience: 2,
+	Abilities:  []Ability{TemplateAbilitySlice, TemplateAbilityStrike},
+}
+
+var TemplateEnemySpider = Enemy{
+	Name:       EnemySpider,
+	CurrentHp:  1,
+	MaxHp:      1,
+	ArmorClass: 15,
+	Experience: 2,
+	Abilities:  []Ability{TemplateAbilityStrike, TemplateAbilityBite},
+}
+
+var TemplateEnemyWraith = Enemy{
+	Name:       EnemyWraith,
+	CurrentHp:  2,
+	MaxHp:      2,
+	ArmorClass: 15,
+	Experience: 3,
+	Abilities:  []Ability{TemplateAbilityDeathShriek},
+}
+
+var TemplateEnemyZombie = Enemy{
+	Name:       EnemyZombie,
+	CurrentHp:  1,
+	MaxHp:      1,
+	ArmorClass: 11,
+	Experience: 1,
+	Abilities:  []Ability{TemplateAbilityClaw},
+}
+
+var TemplateEnemyGargoyle = Enemy{
+	Name:       EnemyGargoyle,
+	CurrentHp:  2,
+	MaxHp:      2,
+	ArmorClass: 16,
+	Experience: 3,
+	Abilities:  []Ability{TemplateAbilityStoneClaw},
+}
+
+var TemplateEnemyBlazingSkeleton = Enemy{
+	Name:       EnemyBlazingSkeleton,
+	CurrentHp:  2,
+	MaxHp:      2,
+	ArmorClass: 13,
+	Experience: 2,
+	Abilities:  []Ability{TemplateAbilityFlameStrike},
 }
