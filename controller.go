@@ -165,6 +165,26 @@ func MovePlayer(w http.ResponseWriter, r *http.Request) {
 	buildResponse(w, r, "You moved. "+availablePathsText+enemyDetectedText)
 }
 
+func PlayerAbilitiesAction(w http.ResponseWriter, r *http.Request) {
+	text := ""
+
+	for i := 0; i < len(player.Abilities); i++ {
+		text += " " + player.Abilities[i].Name + " has attack of " + strconv.Itoa(player.Abilities[i].Attack) + " and damage of " + strconv.Itoa(player.Abilities[i].Damage) + ". "
+
+		if player.Abilities[i].CD != 0 {
+			text += " It also has a cooldown of " + strconv.Itoa(player.Abilities[i].CD)
+		}
+
+		if player.Abilities[i].CurrentCD != 0 {
+			text += " and can be used again in " + strconv.Itoa(player.Abilities[i].CurrentCD) + " turns"
+		}
+	}
+
+	text += "."
+
+	buildResponse(w, r, text)
+}
+
 func ResetAction(w http.ResponseWriter, r *http.Request) {
 	enemies = []Enemy{}
 	player = Player{}

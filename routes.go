@@ -41,8 +41,14 @@ var routes = Routes{
 	Route{
 		"PlayerAttack",
 		"GET",
-		"/player/attack/{ability}",
+		"/player/{ability}/attack",
 		PlayerAttackAction,
+	},
+	Route{
+		"PlayerAbilities",
+		"GET",
+		"/player/ability",
+		PlayerAbilitiesAction,
 	},
 	Route{
 		"ResetDungeon",
