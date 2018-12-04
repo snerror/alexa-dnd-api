@@ -7,9 +7,9 @@ import (
 )
 
 var (
-	PLAYER_CLASS_ROGUE   = "rogue"
-	PLAYER_CLASS_FIGHTER = "fighter"
-	PLAYER_CLASS_CLERIC  = "cleric"
+	PlayerClassRogue   = "rogue"
+	PlayerClassFighter = "fighter"
+	PlayerClassCleric  = "cleric"
 )
 
 type Player struct {
@@ -37,35 +37,20 @@ type Position struct {
 }
 
 func (p *Player) CreateFromTemplate(t string) error {
-	if t != PLAYER_CLASS_CLERIC && t != PLAYER_CLASS_FIGHTER && t != PLAYER_CLASS_ROGUE {
+	if t != PlayerClassCleric && t != PlayerClassFighter && t != PlayerClassRogue {
 		return fmt.Errorf("unknown class provided")
 	}
 
-	if t == PLAYER_CLASS_ROGUE {
-		p.Name = "Kat"
-		p.Class = PLAYER_CLASS_ROGUE
-		p.CurrentHp = 8
-		p.MaxHp = 8
-		p.ArmorClass = 14
+	if t == PlayerClassRogue {
+		*p = TemplateClassRogue
+	}
 
-		a1 := Ability{
-			Name:      "Backstab",
-			Attack:    10,
-			Damage:    2,
-			CD:        3,
-			CurrentCD: 0,
-		}
+	if t == PlayerClassCleric {
+		*p = TemplateClassCleric
+	}
 
-		a2 := Ability{
-			Name:      "Strike",
-			Attack:    7,
-			Damage:    1,
-			CD:        0,
-			CurrentCD: 0,
-		}
-
-		p.Abilities = append(p.Abilities, a1)
-		p.Abilities = append(p.Abilities, a2)
+	if t == PlayerClassFighter {
+		*p = TemplateClassFighter
 	}
 
 	p.Experience = 0
