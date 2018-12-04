@@ -107,7 +107,7 @@ func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 	return fmt.Sprintf("Ability %s hit %s with %d damage.", a.Name, e.Name, a.Damage)
 }
 
-func (p *Player) Move(d *Dungeon, strDirection string) string {
+func (p *Player) Move(d *Dungeon, strDirection string) (bool, error) {
 	direction := 0
 
 	if strDirection == "up" {
@@ -127,11 +127,11 @@ func (p *Player) Move(d *Dungeon, strDirection string) string {
 	}
 
 	if direction == 0 {
-		return "Unknown direction given. Try again."
+		return false, fmt.Errorf("unknown direction given. Try again")
 	}
 
 	if d.CheckMoveDirection(p.Position.X, p.Position.Y, direction) == false {
-		return "Unable to move there. Try again."
+		return false, fmt.Errorf("unable to move there. Try again")
 	}
 
 	if direction == up {
@@ -150,7 +150,7 @@ func (p *Player) Move(d *Dungeon, strDirection string) string {
 		player.Position.Y--
 	}
 
-	return "You moved deeper into the dark hallway."
+	return true, nil
 }
 
 func DiceRoll() int {

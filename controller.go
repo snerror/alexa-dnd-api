@@ -128,7 +128,10 @@ func MovePlayer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	movePlayerText := player.Move(&dungeon, d)
+	if _, err := player.Move(&dungeon, d); err != nil {
+		buildResponse(w, r, fmt.Sprintf("%s", err))
+		return
+	}
 	enemyDetectedText := ""
 
 	for i := 0; i < len(enemies); i++ {
@@ -142,24 +145,24 @@ func MovePlayer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	availablePathsText := " Available paths are "
-	if dungeon.cells[player.Position.X][player.Position.Y]&up == 1 {
+	if dungeon.cells[player.Position.X][player.Position.Y]&up != 0 {
 		availablePathsText += " up,"
 	}
 
-	if dungeon.cells[player.Position.X][player.Position.Y]&down == 1 {
+	if dungeon.cells[player.Position.X][player.Position.Y]&down != 0 {
 		availablePathsText += " down,"
 	}
 
-	if dungeon.cells[player.Position.X][player.Position.Y]&right == 1 {
+	if dungeon.cells[player.Position.X][player.Position.Y]&right != 0 {
 		availablePathsText += " right,"
 	}
 
-	if dungeon.cells[player.Position.X][player.Position.Y]&left == 1 {
+	if dungeon.cells[player.Position.X][player.Position.Y]&left != 0 {
 		availablePathsText += " left,"
 	}
 	availablePathsText += "."
 
-	buildResponse(w, r, movePlayerText+availablePathsText+enemyDetectedText)
+	buildResponse(w, r, "You moved. "+availablePathsText+enemyDetectedText)
 }
 
 func ResetAction(w http.ResponseWriter, r *http.Request) {
