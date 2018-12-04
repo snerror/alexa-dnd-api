@@ -39,15 +39,9 @@ var routes = Routes{
 		MovePlayer,
 	},
 	Route{
-		"PlayerAttackEnemyAction",
+		"PlayerAttack",
 		"GET",
-		"/player/attack/{ability}/{enemyId}",
-		PlayerAttackEnemyAction,
-	},
-	Route{
-		"EnemyAttackPlayer",
-		"GET",
-		"/enemy/{enemyId}/attack",
-		EnemyAttackPlayerAction,
+		"/player/attack/{ability}",
+		PlayerAttackAction,
 	},
 }

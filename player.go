@@ -79,7 +79,6 @@ func (p *Player) CreateFromTemplate(t string) error {
 	return nil
 }
 
-// TODO add CD
 func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 	if a.CD != 0 && a.CurrentCD != 0 {
 		return fmt.Sprintf("Ability %s currently on cooldown. You can use it in %d turns.", a.Name, a.CurrentCD)
@@ -90,9 +89,7 @@ func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 
 	if (diceRoll + a.Attack) < e.ArmorClass {
 		log.Printf("PLAYER missed %s.\n", e.Name)
-		// ENEMY RESPONSE
-		enemyAttackResponse := e.AttackPlayer()
-		return fmt.Sprintf("Ability %s missed %s. %s", a.Name, e.Name, enemyAttackResponse)
+		return fmt.Sprintf("You missed %s with %s.", e.Name, a.Name)
 	}
 
 	e.CurrentHp = e.CurrentHp - a.Damage
@@ -109,10 +106,7 @@ func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 		return fmt.Sprintf("Ability %s defeated %s with %d damage.", a.Name, e.Name, a.Damage)
 	}
 
-	// ENEMY RESPONSE
-	enemyAttackResponse := e.AttackPlayer()
-
-	return fmt.Sprintf("Ability %s hit %s with %d damage. %s", a.Name, e.Name, a.Damage, enemyAttackResponse)
+	return fmt.Sprintf("Ability %s hit %s with %d damage.", a.Name, e.Name, a.Damage)
 }
 
 func (p *Player) Move(d *Dungeon, strDirection string) string {
@@ -135,7 +129,7 @@ func (p *Player) Move(d *Dungeon, strDirection string) string {
 	}
 
 	if direction == 0 {
-		return "unknown direction given"
+		return "Unknown direction given. Try again."
 	}
 
 	if d.CheckMoveDirection(p.Position.X, p.Position.Y, direction) == false {
@@ -158,7 +152,7 @@ func (p *Player) Move(d *Dungeon, strDirection string) string {
 		player.Position.Y--
 	}
 
-	return "Successfully moved player"
+	return "You moved deeper into the dark hallway."
 }
 
 func DiceRoll() int {

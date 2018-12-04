@@ -26,58 +26,56 @@ func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	textResponse := "You've chosen " + player.Name + " the " + player.Class + ". To know more about your class ask me 'what are my stats?'."
+	text := "You've chosen " + player.Name + " the " + player.Class + ". To know more about your class ask me 'what are my stats?'. "
 
-	buildResponse(w, r, textResponse)
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	buildResponse(w, r, text)
 }
 
 func GetPlayerDetailsAction(w http.ResponseWriter, r *http.Request) {
-	if player.Name == "" {
+	if isPlayerCreated() == false {
 		buildResponse(w, r, "You must choose a class first")
 		return
 	}
 
-	textResponse := "You play a " + player.Class + " named " + player.Name + ". Your current HP is " + strconv.Itoa(player.CurrentHp) + " out of " + strconv.Itoa(player.MaxHp) + " and your armor class is " + strconv.Itoa(player.ArmorClass) + ". You also have " + strconv.Itoa(len(player.Abilities)) + " abilities."
+	text := "You play a " + player.Class + " named " + player.Name + ". Your current HP is " + strconv.Itoa(player.CurrentHp) + " out of " + strconv.Itoa(player.MaxHp) + " and your armor class is " + strconv.Itoa(player.ArmorClass) + ". You also have " + strconv.Itoa(len(player.Abilities)) + " abilities."
 
 	for i := 0; i < len(player.Abilities); i++ {
-		textResponse += player.Abilities[i].Name + " has attack of " + strconv.Itoa(player.Abilities[i].Attack) + " and damage of " + strconv.Itoa(player.Abilities[i].Damage) + "."
+		text += " " + player.Abilities[i].Name + " has attack of " + strconv.Itoa(player.Abilities[i].Attack) + " and damage of " + strconv.Itoa(player.Abilities[i].Damage) + ". "
 
 		if player.Abilities[i].CD != 0 {
-			textResponse += "It also has a cooldown of " + strconv.Itoa(player.Abilities[i].CD) + "."
+			text += " It also has a cooldown of " + strconv.Itoa(player.Abilities[i].CD) + ". "
 		}
 	}
 
-	buildResponse(w, r, textResponse)
+	buildResponse(w, r, text)
 }
 
-func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
-	var enemy *Enemy
-	var ability *Ability
-
-	vars := mux.Vars(r)
-	a := vars["ability"]
-	enemyId, err := strconv.Atoi(vars["enemyId"])
-	if err != nil {
-		serverError(w, r, err)
+func PlayerAttackAction(w http.ResponseWriter, r *http.Request) {
+	if isPlayerCreated() == false {
+		buildResponse(w, r, "You must choose a class first")
 		return
 	}
 
+	var e *Enemy
+	var a *Ability
+
+	vars := mux.Vars(r)
+	v := vars["ability"]
+
 	for i := 0; i < len(enemies); i++ {
-		if enemies[i].ID == enemyId {
-			enemy = &enemies[i]
+		if enemies[i].Position.X == player.Position.X && enemies[i].Position.Y == player.Position.Y {
+			e = &enemies[i]
 		}
 	}
 
-	if enemy == nil {
-		buildResponse(w, r, "enemy not found")
+	if e == nil {
+		buildResponse(w, r, "No enemies around you.")
 		return
 	}
 
 	for i := 0; i < len(player.Abilities); i++ {
-		if strings.ToLower(player.Abilities[i].Name) == strings.ToLower(a) {
-			ability = &player.Abilities[i]
+		if strings.ToLower(player.Abilities[i].Name) == strings.ToLower(v) {
+			a = &player.Abilities[i]
 		}
 
 		if player.Abilities[i].CurrentCD > 0 {
@@ -85,42 +83,73 @@ func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if ability == nil {
-		buildResponse(w, r, "unknown ability used")
+	if a == nil {
+		buildResponse(w, r, "You don't have that ability.")
 		return
 	}
 
-	buildResponse(w, r, player.AttackEnemy(ability, enemy))
-}
-
-func MovePlayer(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	direction := vars["direction"]
-
-	buildResponse(w, r, player.Move(&dungeon, direction))
-}
-
-func EnemyAttackPlayerAction(w http.ResponseWriter, r *http.Request) {
-	var enemy Enemy
-
-	vars := mux.Vars(r)
-	enemyId, err := strconv.Atoi(vars["enemyId"])
-	if err != nil {
-		serverError(w, r, err)
-		return
-	}
-
-	for _, e := range enemies {
-		if e.ID == enemyId {
-			enemy = e
+	playerAttackText := player.AttackEnemy(a, e)
+	enemyAttackText := ""
+	if e.CurrentHp > 0 {
+		enemyAttackText = e.AttackPlayer()
+	} else {
+		for i := 0; i < len(enemies); i++ {
+			if &enemies[i] == e {
+				if i == len(enemies)-1 {
+					enemies = enemies[:len(enemies)-1]
+				} else {
+					enemies = append(enemies[:i], enemies[i+1:]...)
+				}
+			}
 		}
 	}
 
-	if enemy.Name == "" {
-		buildResponse(w, r, "unknown enemy attacked")
+	buildResponse(w, r, playerAttackText+" "+enemyAttackText)
+}
+
+func MovePlayer(w http.ResponseWriter, r *http.Request) {
+	if isPlayerCreated() == false {
+		buildResponse(w, r, "You must choose a class first")
+		return
+	}
+	var e *Enemy
+
+	vars := mux.Vars(r)
+	d := vars["direction"]
+
+	for i := 0; i < len(enemies); i++ {
+		if enemies[i].Position.X == player.Position.X && enemies[i].Position.Y == player.Position.Y {
+			e = &enemies[i]
+		}
 	}
 
-	buildResponse(w, r, enemy.AttackPlayer())
+	if e != nil {
+		buildResponse(w, r, " Unable to move, there is a "+e.Name+" blocking your way. ")
+		return
+	}
+
+	movePlayerText := player.Move(&dungeon, d)
+	enemyDetectedText := ""
+
+	for i := 0; i < len(enemies); i++ {
+		if enemies[i].Position.X == player.Position.X && enemies[i].Position.Y == player.Position.Y {
+			e = &enemies[i]
+		}
+	}
+
+	if e != nil {
+		enemyDetectedText = " A " + e.Name + " emerges from the dark."
+	}
+
+	buildResponse(w, r, movePlayerText+enemyDetectedText)
+}
+
+func isPlayerCreated() bool {
+	if player.Name != "" {
+		return true
+	}
+
+	return false
 }
 
 func buildResponse(w http.ResponseWriter, r *http.Request, value string) {
