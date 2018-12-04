@@ -62,30 +62,18 @@ func (d *Dungeon) generateRecursive(row, col, previousValue int) {
 
 	var possiblePaths []int
 
-	if row != 0 {
-		fmt.Printf("CELL %d %d UP value is %v \n", row, col, dungeon.cells[row-1][col])
-	}
 	if row != 0 && dungeon.cells[row-1][col] == 0 {
 		possiblePaths = append(possiblePaths, up)
 	}
 
-	if row != dungeon.rows-1 {
-		fmt.Printf("CELL %d %d DOWN value is %v \n", row, col, dungeon.cells[row+1][col])
-	}
 	if row != dungeon.rows-1 && dungeon.cells[row+1][col] == 0 {
 		possiblePaths = append(possiblePaths, down)
 	}
 
-	if col != 0 {
-		fmt.Printf("CELL %d %d LEFT value is %v \n", row, col, dungeon.cells[row][col-1])
-	}
 	if col != 0 && dungeon.cells[row][col-1] == 0 {
 		possiblePaths = append(possiblePaths, left)
 	}
 
-	if col != dungeon.cols-1 {
-		fmt.Printf("CELL %d %d LEFT value is %v \n", row, col, dungeon.cells[row][col+1])
-	}
 	if col != dungeon.cols-1 && dungeon.cells[row][col+1] == 0 {
 		possiblePaths = append(possiblePaths, right)
 	}
