@@ -16,15 +16,6 @@ func IndexAction(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func GetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	if err := json.NewEncoder(w).Encode(player); err != nil {
-		serverError(w, r, err)
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-}
-
 func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	className := vars["className"]
@@ -35,9 +26,30 @@ func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	buildResponse(w, r, "player created")
+	textResponse := "You've chosen " + player.Name + " the " + player.Class + ". To know more about your class ask me 'what are my stats?'."
+
+	buildResponse(w, r, textResponse)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+}
+
+func GetPlayerDetailsAction(w http.ResponseWriter, r *http.Request) {
+	if player.Name == "" {
+		buildResponse(w, r, "You must choose a class first")
+		return
+	}
+
+	textResponse := "You play a " + player.Class + " named " + player.Name + ". Your current HP is " + strconv.Itoa(player.CurrentHp) + " out of " + strconv.Itoa(player.MaxHp) + " and your armor class is " + strconv.Itoa(player.ArmorClass) + ". You also have " + strconv.Itoa(len(player.Abilities)) + " abilities."
+
+	for i := 0; i < len(player.Abilities); i++ {
+		textResponse += player.Abilities[i].Name + " has attack of " + strconv.Itoa(player.Abilities[i].Attack) + " and damage of " + strconv.Itoa(player.Abilities[i].Damage) + "."
+
+		if player.Abilities[i].CD != 0 {
+			textResponse += "It also has a cooldown of " + strconv.Itoa(player.Abilities[i].CD) + "."
+		}
+	}
+
+	buildResponse(w, r, textResponse)
 }
 
 func PlayerAttackEnemyAction(w http.ResponseWriter, r *http.Request) {
@@ -121,6 +133,7 @@ func buildResponse(w http.ResponseWriter, r *http.Request, value string) {
 		serverError(w, r, err)
 		return
 	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 }
 

@@ -24,7 +24,7 @@ var routes = Routes{
 		"GetPlayerClass",
 		"GET",
 		"/player",
-		GetPlayerClassAction,
+		GetPlayerDetailsAction,
 	},
 	Route{
 		"SetPlayerClass",
