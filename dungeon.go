@@ -36,14 +36,17 @@ func (d *Dungeon) generate() {
 }
 
 const (
-	up    = 1 << iota //1
-	down              //2
-	right             //4
-	left              //8
+	up      = 1 << iota //1
+	down                //2
+	right               //4
+	left                //8
+	deadend             //16
 )
 
 func (d *Dungeon) generateRecursive(row, col, previousValue int) {
 	rand.Seed(time.Now().UnixNano())
+
+	fmt.Printf("CELL %d %d current value is %v \n", row, col, dungeon.cells[row][col])
 
 	var previousCell int
 
@@ -59,37 +62,47 @@ func (d *Dungeon) generateRecursive(row, col, previousValue int) {
 
 	var possiblePaths []int
 
+	if row != 0 {
+		fmt.Printf("CELL %d %d UP value is %v \n", row, col, dungeon.cells[row-1][col])
+	}
 	if row != 0 && dungeon.cells[row-1][col] == 0 {
 		possiblePaths = append(possiblePaths, up)
 	}
 
+	if row != dungeon.rows-1 {
+		fmt.Printf("CELL %d %d DOWN value is %v \n", row, col, dungeon.cells[row+1][col])
+	}
 	if row != dungeon.rows-1 && dungeon.cells[row+1][col] == 0 {
 		possiblePaths = append(possiblePaths, down)
 	}
 
+	if col != 0 {
+		fmt.Printf("CELL %d %d LEFT value is %v \n", row, col, dungeon.cells[row][col-1])
+	}
 	if col != 0 && dungeon.cells[row][col-1] == 0 {
 		possiblePaths = append(possiblePaths, left)
 	}
 
+	if col != dungeon.cols-1 {
+		fmt.Printf("CELL %d %d LEFT value is %v \n", row, col, dungeon.cells[row][col+1])
+	}
 	if col != dungeon.cols-1 && dungeon.cells[row][col+1] == 0 {
 		possiblePaths = append(possiblePaths, right)
 	}
 
 	if len(possiblePaths) == 0 {
-		fmt.Printf("CELL %d %d reached DEAD END %d. SKIPPING\n", row, col, dungeon.cells[row][col])
+		if dungeon.cells[row][col] == 0 {
+			dungeon.cells[row][col] = deadend
+		}
+		fmt.Printf("CELL %d %d reached DEAD END %d. RETURNING TO NODE BEFORE\n", row, col, dungeon.cells[row][col])
 		return
+	} else {
+		fmt.Printf("CELL %d %d POSSIBLE PATHS ARE %v\n", row, col, possiblePaths)
+		dungeon.cells[row][col] += possiblePaths[rand.Int()%len(possiblePaths)]
+		fmt.Printf("CELL %d %d GENERATED value %v\n", row, col, dungeon.cells[row][col])
+		dungeon.cells[row][col] = dungeon.cells[row][col] + previousCell
+		fmt.Printf("CELL %d %d CONNECTED TO PREVIOUS CELL, VALUE NOW %v\n", row, col, dungeon.cells[row][col])
 	}
-
-	if dungeon.cells[row][col] != 0 {
-		fmt.Printf("CELL %d %d ALREADY GENERATED  %d. SKIPPING\n", row, col, dungeon.cells[row][col])
-		return
-	}
-
-	dungeon.cells[row][col] = possiblePaths[rand.Int()%len(possiblePaths)]
-	fmt.Printf("CELL %d %d GENERATED value %v\n", row, col, dungeon.cells[row][col])
-
-	dungeon.cells[row][col] = dungeon.cells[row][col] + previousCell
-	fmt.Printf("CELL %d %d CONNECTED TO PREVIOUS CELL, VALUE NOW %v\n", row, col, dungeon.cells[row][col])
 
 	generateEnemy := rand.Intn(5)
 	if generateEnemy == 1 {
@@ -107,28 +120,27 @@ func (d *Dungeon) generateRecursive(row, col, previousValue int) {
 	}
 
 	// Generate next cell.
-	if dungeon.cells[row][col]&up != 0 && row != 0 && up != previousCell {
+	if dungeon.cells[row][col]&up != 0 && row != 0 && up != previousCell && dungeon.cells[row-1][col] == 0 {
 		fmt.Printf("UP to next CELL %d %d \n", row-1, col)
 		d.generateRecursive(row-1, col, up)
 	}
 
-	if dungeon.cells[row][col]&down != 0 && row != dungeon.rows-1 && down != previousCell {
+	if dungeon.cells[row][col]&down != 0 && row != dungeon.rows-1 && down != previousCell && dungeon.cells[row+1][col] == 0 {
 		fmt.Printf("DOWN to next CELL %d %d \n", row+1, col)
 		d.generateRecursive(row+1, col, down)
 	}
 
-	if dungeon.cells[row][col]&left != 0 && col != 0 && left != previousCell {
+	if dungeon.cells[row][col]&left != 0 && col != 0 && left != previousCell && dungeon.cells[row][col-1] == 0 {
 		fmt.Printf("LEFT to next CELL %d %d \n", row, col-1)
 		d.generateRecursive(row, col-1, left)
 	}
 
-	if dungeon.cells[row][col]&right != 0 && col != dungeon.cols-1 && right != previousCell {
+	if dungeon.cells[row][col]&right != 0 && col != dungeon.cols-1 && right != previousCell && dungeon.cells[row][col+1] == 0 {
 		fmt.Printf("RIGHT to next CELL %d %d \n", row, col+1)
 		d.generateRecursive(row, col+1, right)
 	}
 
-	fmt.Printf("CELL %d %d is NOT VALID with value %v. Recreating cell. \n", row, col, dungeon.cells[row][col])
-	d.generateRecursive(row, col, previousValue)
+	d.generateRecursive(row, col, 0)
 }
 
 func (d *Dungeon) DrawDungeon() {
