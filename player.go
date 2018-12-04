@@ -12,13 +12,6 @@ var (
 	PLAYER_CLASS_CLERIC  = "cleric"
 )
 
-var (
-	COMBAT_ABILITY_ON_COOLDOWN = "ability_on_cooldown"
-	COMBAT_ATTACK_MISSED       = "attack_missed"
-	COMBAT_ENEMY_DAMAGED       = "enemy_damaged"
-	COMBAT_ENEMY_KILLED        = "enemy_killed"
-)
-
 type Player struct {
 	Name       string
 	Class      string
