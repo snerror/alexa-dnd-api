@@ -36,11 +36,10 @@ func (d *Dungeon) generate() {
 }
 
 const (
-	up      = 1 << iota //1
-	down                //2
-	right               //4
-	left                //8
-	deadend             //16
+	up    = 1 << iota //1
+	down              //2
+	right             //4
+	left              //8
 )
 
 func (d *Dungeon) generateRecursive(row, col, previousValue int) {
@@ -80,7 +79,7 @@ func (d *Dungeon) generateRecursive(row, col, previousValue int) {
 
 	if len(possiblePaths) == 0 {
 		if dungeon.cells[row][col] == 0 {
-			dungeon.cells[row][col] += deadend
+			dungeon.cells[row][col] += previousCell
 		}
 		fmt.Printf("CELL %d %d reached DEAD END %d. RETURNING TO NODE BEFORE\n", row, col, dungeon.cells[row][col])
 		return
