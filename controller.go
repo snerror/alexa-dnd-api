@@ -26,7 +26,7 @@ func SetPlayerClassAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	text := "You've chosen " + player.Name + " the " + player.Class + ". To know more about your class ask me 'what are my stats?'. "
+	text := "You've chosen " + player.Name + " the " + player.Class + ". To know more about your class ask me what are my stats?. You can now begin your journey. "
 
 	buildResponse(w, r, text)
 }

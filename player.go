@@ -88,10 +88,10 @@ func (p *Player) AttackEnemy(a *Ability, e *Enemy) string {
 		log.Printf("PLAYER kills %s.\n", e.Name)
 		p.Experience += e.Experience
 
-		defeatedEnemyText := fmt.Sprintf("Ability %s defeated %s with %d damage.", a.Name, e.Name, a.Damage)
+		defeatedEnemyText := fmt.Sprintf("Ability %s defeated %s with %d damage. You have gained %d experience", a.Name, e.Name, a.Damage, e.Experience)
 		levelUpText := ""
 
-		if p.Experience > 5 {
+		if p.Experience > 2 {
 			p.MaxHp += 2
 			p.CurrentHp = p.MaxHp
 			p.ArmorClass += 1
