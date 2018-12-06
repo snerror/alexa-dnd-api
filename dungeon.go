@@ -91,7 +91,7 @@ func (d *Dungeon) generateRecursive(row, col, previousValue int) {
 		fmt.Printf("CELL %d %d CONNECTED TO PREVIOUS CELL, VALUE NOW %v\n", row, col, dungeon.cells[row][col])
 	}
 
-	generateEnemy := rand.Intn(10)
+	generateEnemy := rand.Intn(2)
 	if generateEnemy == 1 {
 		var enemy Enemy
 
